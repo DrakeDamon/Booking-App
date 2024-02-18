@@ -1,19 +1,16 @@
+// src/server/db.ts
+
 import { PrismaClient } from "@prisma/client";
 
-import { env } from "../../env/server.mjs";
+// Assuming you have a DATABASE_URL environment variable
+const databaseUrl = process.env.DATABASE_URL;
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: databaseUrl,
+    },
+  },
+});
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
-
-if (env.NODE_ENV !== "production") {
-  global.prisma = prisma;
-}
+export { prisma };

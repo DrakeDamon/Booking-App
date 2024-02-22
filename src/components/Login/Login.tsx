@@ -1,31 +1,41 @@
-import { useRouter } from 'next/router'
-import { useState, type ChangeEvent, type FC } from 'react'
-import { HiLockClosed } from 'react-icons/hi'
-import { trpc } from '../../utils/trpc'
+import { useRouter } from 'next/router';
+import { useState, type ChangeEvent, type FC } from 'react';
+import { HiLockClosed } from 'react-icons/hi';
+import { trpc } from '../../utils/trpc';
 
 const Login: FC = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   const { mutate: login, error } = trpc.admin.login.useMutation({
     onSuccess: () => {
-      router.push('/dashboard')
+      router.push('/dashboard');
     },
-  })
+  });
 
   const [input, setInput] = useState({
     email: '',
     password: '',
-  })
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setInput((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setInput((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(input);
+    } catch (error) {
+      console.error('Login error:', error);
+      // Optionally update state to display an error message here
+    }
+  };
+
   return (
     <div className='flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
       <div className='w-full max-w-md space-y-8'>
         <div>
-          {/* If this was a real login screen, you'd want a next/image here */}
           <img
             className='mx-auto h-12 w-auto'
             src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
@@ -39,7 +49,7 @@ const Login: FC = () => {
             </a>
           </p>
         </div>
-        <form className='mt-8 space-y-6'>
+        <form className='mt-8 space-y-6' onSubmit={handleSubmit}>
           <input type='hidden' name='remember' defaultValue='true' />
           <div className='-space-y-px rounded-md shadow-sm'>
             <p className='pb-1 text-sm text-red-600'>{error && 'Invalid login credentials'}</p>
@@ -100,10 +110,6 @@ const Login: FC = () => {
           <div>
             <button
               type='submit'
-              onClick={(e) => {
-                e.preventDefault()
-                login(input)
-              }}
               className='group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
               <span className='absolute inset-y-0 left-0 flex items-center pl-3'>
                 <HiLockClosed
@@ -117,7 +123,7 @@ const Login: FC = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

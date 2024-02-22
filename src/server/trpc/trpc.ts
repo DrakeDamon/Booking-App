@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { verifyAuth } from '../../lib/auth'
 
-import { type Context } from './routers/context'
+import { type Context } from './context'
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,

@@ -1,7 +1,7 @@
 import { type inferAsyncReturnType } from '@trpc/server'
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 // Adjust the path as necessary to correctly point to your db module
-import { prisma } from "../../../server/db";
+import { prisma } from "../db/db";
 
 export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;

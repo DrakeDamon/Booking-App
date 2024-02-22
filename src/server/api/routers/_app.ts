@@ -1,4 +1,4 @@
-import { createTRPCRouter as router } from "@/server/api/trpc";
+import { router } from '../../trpc/trpc'
 import { adminRouter } from './admin'
 
 export const appRouter = router({

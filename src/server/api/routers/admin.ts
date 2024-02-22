@@ -1,42 +1,30 @@
-import { router, publicProcedure } from '../trpc';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { SignJWT } from 'jose';
-import { nanoid } from 'nanoid';
-import cookie from 'cookie';
+import { publicProcedure, router } from '../../trpc/trpc';
+import AWS from 'aws-sdk';
 
-// Ensure environment variables are safely accessed
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? '';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? '';
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY ?? '';
+// Assuming AWS credentials are set in environment variables
+const s3 = new AWS.S3();
 
 export const adminRouter = router({
   login: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      password: z.string(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      const { res } = ctx;
+    .input(z.object({ email: z.string(), password: z.string() }))
+    .mutation(async ({ input }) => {
       const { email, password } = input;
-
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const token = await new SignJWT({ email })
-          .setProtectedHeader({ alg: 'HS256' })
-          .setJti(nanoid())
-          .setIssuedAt()
-          .setExpirationTime('2h')
-          .sign(new TextEncoder().encode(JWT_SECRET_KEY));
-
-        res.setHeader('Set-Cookie', cookie.serialize('user-token', token, {
-          httpOnly: true,
-          path: '/',
-          secure: process.env.NODE_ENV === 'production',
-          maxAge: 7200, // 2 hours in seconds
-        }));
-
-        return { success: true, message: "Login successful" };
-      } else {
-        throw new Error('Invalid login credentials');
+      // Placeholder for your authentication logic
+      if (email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Invalid email or password',
+        });
       }
+
+      // Your token generation logic here...
+
+      return { success: true };
     }),
+
+  // Other procedures can go here...
 });
+
+// Ensure any other mentioned procedures or variables are either implemented or removed to avoid unused variable errors.

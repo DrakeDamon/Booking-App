@@ -1,14 +1,12 @@
 // @ts-check
+// @ts-check
 import { z } from "zod";
 
-/**
- * Specify your server-side environment variables schema here.
- * This way you can ensure the app isn't built with invalid env vars.
- */
 export const serverSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string(), // Removed .url() for SQLite compatibility
   NODE_ENV: z.enum(["development", "test", "production"]),
 });
+
 
 /**
  * Specify your client-side environment variables schema here.
